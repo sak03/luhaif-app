@@ -48,7 +48,7 @@ const Staff = () => {
             return errors;
         },
         onSubmit: (data) => {
-            // addForm(data);
+            addForm(data);
             tenantFormik.resetForm();
             setViewMode(0);
         },
@@ -69,11 +69,6 @@ const Staff = () => {
         await axios
             .get(
                 `https://reqres.in/api/users?page=2`,
-                {
-                    // headers: {
-                    //     "Content-Type": "application/x-www-form-urlencoded;",
-                    // },
-                }
             )
             .then(
                 (res) => {
@@ -170,7 +165,7 @@ const Staff = () => {
     // ==== row click handler =======
     const rowClickHandler = (rowdata) => {
         const dt = rowdata.data;
-        console.log(dt, "row data");
+        // console.log(dt, "row data");
         setViewMode(1);
         setEditMode(2);
         setSelectedRowData(rowdata.data);
