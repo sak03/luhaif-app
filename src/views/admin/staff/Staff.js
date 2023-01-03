@@ -48,9 +48,9 @@ const Staff = () => {
             return errors;
         },
         onSubmit: (data) => {
-            addForm(data);
             tenantFormik.resetForm();
-            setViewMode(0);
+            editMode === 2 ? updateAllstaffs(data) : ""
+            console.log("formik Data", data)
         },
     });
     const isTenantFormFieldValid = (name) =>
@@ -63,12 +63,27 @@ const Staff = () => {
         );
     };
 
+    //==== show update message ======
+    const showSuccessUpdate = (severity) => {
+        toast.current.show({
+            severity: 'success',
+            summary: severity == 'success' ? 'Updated' : "Oops",
+            detail: severity == 'success' ? 'User has been successfully updated' :"Something went wrong",
+            life: 3000
+        });
+    }
+
     // get all staff data from API Server
     const getAllstaffs = async (data) => {
         setshowspinner(true);
         await axios
             .get(
-                `https://reqres.in/api/users?page=2`,
+                `https://reqres.in/api/users?page=1&per_page=50`,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
             )
             .then(
                 (res) => {
@@ -80,6 +95,44 @@ const Staff = () => {
                 (err) => {
                     console.log(err);
                     setshowspinner(false);
+                }
+            );
+    };
+
+    // get all staff data from API Server
+    const updateAllstaffs = async (data) => {
+        setshowspinner(true);
+        const postData = {
+            avatar: selectedRowData.avatar,
+            email: data.email,
+            first_name: data.fname,
+            id: selectedRowData.id,
+            last_name: data.lname
+        }
+        console.log("postData", postData);
+        await axios
+            .put(
+                `https://reqres.in/api/users/${selectedRowData.id}`, postData,
+                {
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                }
+            )
+            .then(
+                (res) => {
+                    const dt = res.data.data;
+                    getAllstaffs();
+                    // console.log("ndt1", dt);
+                    settenantData1(dt);
+                    setshowspinner(false);
+                    showSuccessUpdate("success");
+                    setViewMode(0);
+                },
+                (err) => {
+                    console.log(err);
+                    setshowspinner(false);
+                    showSuccessUpdate("error");
                 }
             );
     };
